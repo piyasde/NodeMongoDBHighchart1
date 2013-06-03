@@ -1,0 +1,133 @@
+<html>
+<head>
+<script type="text/javascript" src="jquery-1.8.3.js"></script>
+<script type="text/javascript">
+var myAjaxChart;
+var mydata = [];
+$(document).ready(function () {
+	
+	//Arachide //Amidon
+	 $("#seedselect").change(function() {
+	    mydata = [];
+        requestData($(this).val());
+    });
+	
+	function requestData(data) {
+		$.ajax({
+			url: 'http://localhost:1212/getseeddata/'+data,
+			type: "GET",
+			dataType: "json",
+			success: function(seed) {
+				var jsonobj = seed;
+				var obj = jQuery.parseJSON(jsonobj);
+				for(i=0;i<obj.length;i++)
+					{
+					  mydata.push(parseInt(obj[i].price)); 
+					}
+					//Chart
+					var options ={
+					chart: {
+						renderTo: 'container',
+						type: 'line',
+						marginRight: 130,
+						marginBottom: 25,
+						
+					},
+					title: {
+						text: 'Price Data',
+						x: -20 //center
+					},
+					xAxis: {
+						//categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+						//	'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+					},
+					yAxis: {
+						title: {
+							text: 'Price (Rs)'
+						},
+						plotLines: [{
+							value: 0,
+							width: 1,
+							color: '#808080'
+						}]
+					},
+					tooltip: {
+						valueSuffix: 'Rs'
+					},
+					legend: {
+						layout: 'vertical',
+						align: 'right',
+						verticalAlign: 'top',
+						x: -10,
+						y: 100,
+						borderWidth: 0
+					}
+					,
+					series: [{
+						name: 'Price',
+						data: mydata
+						//data: [11,12,13,14]
+					}],
+				};
+				var chardata = new Highcharts.Chart(options);
+			},
+			cache: false
+		});
+	}
+	
+});
+
+
+</script>
+<style>
+table {
+font: normal 13px arial;
+color: #3a3a3a;
+}
+input.submitNice{
+-moz-border-radius: 3px;
+-webkit-border-radius: 3px;
+border-radius: 3px;
+-moz-box-shadow: 0 1px 0 rgba(255,255,255,0.33) inset;
+-webkit-box-shadow: 0 0 1px rgba(255,255,255,0.33) inset;
+box-shadow: 0 1px 0 rgba(255,255,255,0.33) inset;
+background: #448d00;
+border: solid 1px #356d0c;
+color: #fff;
+padding: 5px;
+font: normal 13px arial;
+text-shadow: 0px 0px #fff;
+}
+th h3, td h3{
+ font:11px;
+}
+.nice-select {
+	background: #fafafa !important;
+	border: solid 1px #ccc !important;
+	padding: 3px !important;
+	}
+
+</style>
+</head>
+<body>
+<form action="" method="post">
+<table>
+<tr>
+<td><b>Seeds :</b></td>
+<td>
+<select id="seedselect" name="seed" class="nice-select" >
+	<option value="Arachide">Arachide</option>
+	<option value="Amidon">Amidon</option>
+</select>
+</td>
+</tr>
+</table>
+<hr>
+</form>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+</body>
+</html>
